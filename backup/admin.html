@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Admin - Desafio do Pingão</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Righteous&family=Poppins:wght@400;700&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(27, 94, 32, 0.9);
+            border: 4px solid #8B4513;
+            box-shadow: 
+                0 0 0 2px #DAA520,
+                0 0 40px rgba(218, 165, 32, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-family: 'Righteous', cursive;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #DAA520, #F4C430, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 10px rgba(218, 165, 32, 0.8));
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #DAA520;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 3px solid #DAA520;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.5);
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            color: #DAA520;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-family: 'Righteous', cursive;
+            font-size: 42px;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: 2px solid #DAA520;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #DAA520, #B8860B);
+            color: #000;
+            border-color: #8B4513;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #DAA520;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(218, 165, 32, 0.3);
+            border-top-color: #DAA520;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 3px solid #DAA520;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 24px;
+            color: #DAA520;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(218, 165, 32, 0.8);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .tab:hover {
+            color: #DAA520;
+        }
+
+        .tab.active {
+            color: #DAA520;
+            border-bottom-color: #DAA520;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(46, 125, 50, 0.6);
+            border-radius: 8px;
+            border: 2px solid #DAA520;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .list-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4);
+        }
+
+        .recorde-item:nth-child(1) {
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .recorde-item:nth-child(2) {
+            background: linear-gradient(145deg, #C0C0C0, #A8A8A8);
+            color: #000;
+        }
+
+        .recorde-item:nth-child(3) {
+            background: linear-gradient(145deg, #CD7F32, #B8860B);
+            color: #000;
+        }
+
+        .sala-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(218, 165, 32, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sala-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .sala-info {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sala-jogadores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .jogador-tag {
+            background: rgba(218, 165, 32, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            border: 1px solid rgba(218, 165, 32, 0.5);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .last-update {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-list {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 PAINEL ADMINISTRATIVO</h1>
+        <p class="subtitle">Desafio do Pingão - Histórico Completo</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>👥 Total Jogadores</h3>
+                <div class="value" id="total-jogadores">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>🎮 Total Salas</h3>
+                <div class="value" id="total-salas">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>🏆 Recordes</h3>
+                <div class="value" id="total-recordes">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>💰 Maior Score</h3>
+                <div class="value" id="maior-score">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="carregarDados()">
+                🔄 ATUALIZAR DADOS
+            </button>
+        </div>
+
+        <div id="loading-container"></div>
+
+        <div class="section">
+            <div class="tabs">
+                <button class="tab active" onclick="mudarTab('recordes')">
+                    🏆 RECORDES SOLO
+                </button>
+                <button class="tab" onclick="mudarTab('jogadores')">
+                    👥 JOGADORES
+                </button>
+                <button class="tab" onclick="mudarTab('salas')">
+                    🎮 HISTÓRICO DE SALAS
+                </button>
+            </div>
+
+            <!-- TAB RECORDES -->
+            <div id="tab-recordes" class="tab-content active">
+                <h2>🏆 TOP 10 RECORDES</h2>
+                <div class="grid-list" id="recordes-lista"></div>
+            </div>
+
+            <!-- TAB JOGADORES -->
+            <div id="tab-jogadores" class="tab-content">
+                <h2>👥 TODOS OS JOGADORES</h2>
+                <div class="grid-list" id="jogadores-lista"></div>
+            </div>
+
+            <!-- TAB SALAS -->
+            <div id="tab-salas" class="tab-content">
+                <h2>🎮 ÚLTIMAS 50 SALAS</h2>
+                <div id="salas-lista"></div>
+            </div>
+        </div>
+
+        <div class="last-update">
+            Última atualização: <span id="last-update">--:--:--</span>
+        </div>
+    </div>
+
+    <script>
+        const API_RECORDES = 'https://rachacuca-backend.esdrasjulio.workers.dev/recordes';
+        const API_HISTORICO = 'https://rachacuca-backend.esdrasjulio.workers.dev/historico';
+
+        let dadosRecordes = [];
+        let dadosHistorico = { jogadores: [], salas: [] };
+
+        async function carregarDados() {
+            mostrarLoading(true);
+            
+            try {
+                // Carregar recordes
+                const resRecordes = await fetch(API_RECORDES);
+                dadosRecordes = await resRecordes.json();
+                
+                // Carregar histórico
+                const resHistorico = await fetch(API_HISTORICO);
+                dadosHistorico = await resHistorico.json();
+                
+                // Atualizar estatísticas
+                atualizarEstatisticas();
+                
+                // Renderizar todas as tabs
+                renderizarRecordes();
+                renderizarJogadores();
+                renderizarSalas();
+                
+                atualizarHoraAtualizacao();
+                mostrarLoading(false);
+                
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+                mostrarLoading(false);
+                alert('❌ Erro ao carregar dados. Verifique o console.');
+            }
+        }
+
+        function atualizarEstatisticas() {
+            document.getElementById('total-jogadores').textContent = dadosHistorico.jogadores.length;
+            document.getElementById('total-salas').textContent = dadosHistorico.salas.length;
+            document.getElementById('total-recordes').textContent = dadosRecordes.length;
+            document.getElementById('maior-score').textContent = dadosRecordes.length > 0 ? dadosRecordes[0].fichas : 0;
+        }
+
+        function renderizarRecordes() {
+            const container = document.getElementById('recordes-lista');
+            
+            if (dadosRecordes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🏆</div>
+                        <div>Nenhum recorde registrado ainda.<br>Seja o primeiro a jogar!</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const medals = ['🥇', '🥈', '🥉'];
+            
+            container.innerHTML = dadosRecordes.slice(0, 10).map((r, i) => {
+                const medal = i < 3 ? medals[i] : `${i + 1}º`;
+                const data = new Date(r.data);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="list-item ${i < 3 ? 'recorde-item' : ''}">
+                        <span>${medal} ${r.nome}</span>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold; font-size: 16px;">💰 ${r.fichas}</div>
+                            <div style="font-size: 10px; opacity: 0.8;">${dataFormatada}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarJogadores() {
+            const container = document.getElementById('jogadores-lista');
+            
+            if (dadosHistorico.jogadores.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">👥</div>
+                        <div>Nenhum jogador registrado ainda.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Ordenar por total de partidas
+            const jogadoresOrdenados = [...dadosHistorico.jogadores].sort((a, b) => b.totalPartidas - a.totalPartidas);
+            
+            container.innerHTML = jogadoresOrdenados.map((j) => {
+                const primeiraVez = new Date(j.primeiraVez);
+                const dataFormatada = primeiraVez.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric'
+                });
+                
+                return `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight: bold; margin-bottom: 4px;">👤 ${j.nome}</div>
+                            <div style="font-size: 11px; opacity: 0.8;">Primeira vez: ${dataFormatada}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold; color: #DAA520;">🎮 ${j.totalPartidas}</div>
+                            <div style="font-size: 11px; opacity: 0.8;">${j.totalPartidas === 1 ? 'partida' : 'partidas'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarSalas() {
+            const container = document.getElementById('salas-lista');
+            
+            if (dadosHistorico.salas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <div>Nenhuma sala criada ainda.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Pegar últimas 50 salas (mais recentes primeiro)
+            const salasRecentes = [...dadosHistorico.salas].reverse().slice(0, 50);
+            
+            container.innerHTML = salasRecentes.map((s, i) => {
+                const data = new Date(s.timestamp);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="sala-item">
+                        <div class="sala-header">
+                            <div>
+                                <div style="font-weight: bold; color: #DAA520;">🎲 Sala #${dadosHistorico.salas.length - i}</div>
+                                <div class="sala-info">${dataFormatada}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold;">👥 ${s.totalJogadores}</div>
+                                <div class="sala-info">${s.totalJogadores === 1 ? 'jogador' : 'jogadores'}</div>
+                            </div>
+                        </div>
+                        <div class="sala-jogadores">
+                            ${s.jogadores.map(nome => `<span class="jogador-tag">${nome}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function mudarTab(tab) {
+            // Remover active de todas as tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            
+            // Adicionar active na tab selecionada
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function mostrarLoading(show) {
+            const container = document.getElementById('loading-container');
+            if (show) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div style="margin-top: 15px;">Carregando dados reais do servidor...</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        function atualizarHoraAtualizacao() {
+            const now = new Date();
+            const hora = String(now.getHours()).padStart(2, '0');
+            const minuto = String(now.getMinutes()).padStart(2, '0');
+            const segundo = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('last-update').textContent = `${hora}:${minuto}:${segundo}`;
+        }
+
+        // Carregar dados ao iniciar
+        window.onload = function() {
+            carregarDados();
+        };
+
+        // Atalho F5 para atualizar
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                carregarDados();
+            }
+        });
+    </script>
+</body>
+</html>

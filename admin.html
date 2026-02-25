@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Admin - Desafio do Pingão v2.5</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Righteous&family=Poppins:wght@400;700&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(27, 94, 32, 0.9);
+            border: 4px solid #8B4513;
+            box-shadow: 
+                0 0 0 2px #DAA520,
+                0 0 40px rgba(218, 165, 32, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-family: 'Righteous', cursive;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #DAA520, #F4C430, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 10px rgba(218, 165, 32, 0.8));
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #DAA520;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: 2px solid #DAA520;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #DAA520, #B8860B);
+            color: #000;
+            border-color: #8B4513;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.6);
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border: 2px solid #DAA520;
+            background: rgba(27, 94, 32, 0.8);
+            border-radius: 8px;
+            font-size: 14px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .filter-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #F4C430;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.7);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #DAA520;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.4);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #DAA520;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Righteous', cursive;
+            font-size: 32px;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(218, 165, 32, 0.3);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: #DAA520;
+        }
+
+        .tab.active {
+            color: #DAA520;
+            border-bottom-color: #DAA520;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 3px solid #DAA520;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            font-family: 'Righteous', cursive;
+            font-size: 24px;
+            color: #DAA520;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(218, 165, 32, 0.8);
+        }
+
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .grid-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .grid-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .grid-list::-webkit-scrollbar-thumb {
+            background: #DAA520;
+            border-radius: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(46, 125, 50, 0.6);
+            border-radius: 8px;
+            border: 2px solid #DAA520;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .list-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4);
+        }
+
+        .recorde-item:nth-child(1) {
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .recorde-item:nth-child(2) {
+            background: linear-gradient(145deg, #C0C0C0, #A8A8A8);
+            color: #000;
+        }
+
+        .recorde-item:nth-child(3) {
+            background: linear-gradient(145deg, #CD7F32, #B8860B);
+            color: #000;
+        }
+
+        .sala-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(218, 165, 32, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .sala-item:hover {
+            border-color: #DAA520;
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
+        }
+
+        .sala-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .sala-info {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sala-jogadores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .jogador-tag {
+            background: rgba(218, 165, 32, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            border: 1px solid rgba(218, 165, 32, 0.5);
+            transition: all 0.3s;
+        }
+
+        .jogador-tag:hover {
+            background: rgba(218, 165, 32, 0.5);
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #DAA520;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(218, 165, 32, 0.3);
+            border-top-color: #DAA520;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .last-update {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .versao-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(37, 211, 102, 0.9);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #128C7E;
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #DAA520;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        table thead {
+            background: rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            color: #DAA520;
+            font-weight: bold;
+            border-bottom: 2px solid #DAA520;
+        }
+
+        table tbody tr {
+            background: rgba(46, 125, 50, 0.4);
+            border-bottom: 1px solid rgba(218, 165, 32, 0.2);
+            transition: all 0.3s;
+        }
+
+        table tbody tr:hover {
+            background: rgba(46, 125, 50, 0.7);
+            transform: scale(1.01);
+        }
+
+        table td {
+            padding: 10px 12px;
+            color: #FFFFFF;
+        }
+
+        .position-cell {
+            font-weight: bold;
+            color: #DAA520;
+        }
+
+        .fichas-cell {
+            font-weight: bold;
+            color: #F4C430;
+        }
+
+        .data-cell {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .top3-row {
+            background: rgba(218, 165, 32, 0.3) !important;
+            font-weight: bold;
+        }
+
+        .salas-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .salas-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .salas-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .salas-container::-webkit-scrollbar-thumb {
+            background: #DAA520;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-list {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .filter-input {
+                width: 100%;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            table th, table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="versao-badge">✅ v2.5 FINAL</div>
+
+    <div class="container">
+        <h1>🎯 PAINEL ADMINISTRATIVO</h1>
+        <p class="subtitle">Desafio do Pingão - Histórico Completo</p>
+
+        <div class="controls">
+            <button onclick="carregarDados()">
+                🔄 ATUALIZAR DADOS
+            </button>
+            <input type="text" class="filter-input" id="filtro-geral" placeholder="🔍 Filtrar por nome..." oninput="aplicarFiltro()">
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Jogadores Únicos</div>
+                <div class="stat-value" id="total-jogadores-unicos">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Recordes</div>
+                <div class="stat-value" id="total-recordes">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Salas</div>
+                <div class="stat-value" id="total-salas">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Maior Pontuação</div>
+                <div class="stat-value" id="maior-pontuacao">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Média Geral</div>
+                <div class="stat-value" id="media-geral">0</div>
+            </div>
+        </div>
+
+        <div id="loading-container"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="mudarTab('top10')">
+                🏆 TOP 10
+            </button>
+            <button class="tab" onclick="mudarTab('todos')">
+                👥 TODOS OS RECORDES
+            </button>
+            <button class="tab" onclick="mudarTab('salas')">
+                🎮 SALAS MULTIPLAYER
+            </button>
+        </div>
+
+        <!-- TAB TOP 10 -->
+        <div id="tab-top10" class="tab-content active">
+            <div class="section">
+                <h2>🏆 TOP 10 RECORDES GLOBAIS</h2>
+                <div class="grid-list" id="recordes-top10"></div>
+            </div>
+        </div>
+
+        <!-- TAB TODOS OS JOGADORES -->
+        <div id="tab-todos" class="tab-content">
+            <div class="section">
+                <h2>👥 TODOS OS RECORDES SOLO</h2>
+                <div class="table-container">
+                    <table id="tabela-completa">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Jogador</th>
+                                <th>Fichas</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-completo">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB SALAS -->
+        <div id="tab-salas" class="tab-content">
+            <div class="section">
+                <h2>🎮 HISTÓRICO DE SALAS MULTIPLAYER</h2>
+                <div class="salas-container" id="salas-lista"></div>
+            </div>
+        </div>
+
+        <div class="last-update">
+            Última atualização: <span id="last-update">--:--:--</span>
+        </div>
+    </div>
+
+    <script>
+        const API_RECORDES = 'https://rachacuca-backend.esdrasjulio.workers.dev/recordes';
+        const API_HISTORICO = 'https://rachacuca-backend.esdrasjulio.workers.dev/historico';
+        
+        let todosRecordes = [];
+        let recordesFiltrados = [];
+        let todasSalas = [];
+        let salasFiltradas = [];
+
+        async function carregarDados() {
+            mostrarLoading(true);
+            
+            try {
+                // Carregar recordes
+                const resRecordes = await fetch(API_RECORDES);
+                todosRecordes = await resRecordes.json();
+                recordesFiltrados = [...todosRecordes];
+                
+                // Carregar histórico de salas
+                const resHistorico = await fetch(API_HISTORICO);
+                const historico = await resHistorico.json();
+                todasSalas = historico.salas || [];
+                salasFiltradas = [...todasSalas];
+                
+                atualizarEstatisticas();
+                renderizarTop10();
+                renderizarTodos();
+                renderizarSalas();
+                
+                atualizarHoraAtualizacao();
+                mostrarLoading(false);
+                
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+                mostrarLoading(false);
+                alert('❌ Erro ao carregar dados. Verifique o console.');
+            }
+        }
+
+        function atualizarEstatisticas() {
+            const jogadoresUnicos = new Set(todosRecordes.map(r => r.nome)).size;
+            const totalRecordes = todosRecordes.length;
+            const totalSalas = todasSalas.length;
+            const maiorPontuacao = todosRecordes.length > 0 ? todosRecordes[0].fichas : 0;
+            const mediaGeral = todosRecordes.length > 0 
+                ? Math.round(todosRecordes.reduce((acc, r) => acc + r.fichas, 0) / todosRecordes.length)
+                : 0;
+
+            document.getElementById('total-jogadores-unicos').textContent = jogadoresUnicos;
+            document.getElementById('total-recordes').textContent = totalRecordes;
+            document.getElementById('total-salas').textContent = totalSalas;
+            document.getElementById('maior-pontuacao').textContent = maiorPontuacao;
+            document.getElementById('media-geral').textContent = mediaGeral;
+        }
+
+        function renderizarTop10() {
+            const container = document.getElementById('recordes-top10');
+            
+            if (todosRecordes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🏆</div>
+                        <div>Nenhum recorde registrado ainda.<br>Seja o primeiro a jogar!</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const medals = ['🥇', '🥈', '🥉'];
+            
+            container.innerHTML = todosRecordes.slice(0, 10).map((r, i) => {
+                const medal = i < 3 ? medals[i] : `${i + 1}º`;
+                const data = new Date(r.data);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="list-item ${i < 3 ? 'recorde-item' : ''}">
+                        <span>${medal} ${r.nome}</span>
+                        <div style="text-align: right;">
+                            <div style="font-weight: bold; font-size: 16px;">💰 ${r.fichas}</div>
+                            <div style="font-size: 10px; opacity: 0.8;">${dataFormatada}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarTodos() {
+            const tbody = document.getElementById('tbody-completo');
+            
+            if (recordesFiltrados.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px;">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">👥</div>
+                                <div>Nenhum jogador encontrado.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = recordesFiltrados.map((r, i) => {
+                const data = new Date(r.data);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const isTop3 = i < 3;
+                const medal = isTop3 ? ['🥇', '🥈', '🥉'][i] : '';
+                
+                return `
+                    <tr class="${isTop3 ? 'top3-row' : ''}">
+                        <td class="position-cell">${medal} ${i + 1}º</td>
+                        <td>${r.nome}</td>
+                        <td class="fichas-cell">💰 ${r.fichas}</td>
+                        <td class="data-cell">${dataFormatada}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderizarSalas() {
+            const container = document.getElementById('salas-lista');
+            
+            if (salasFiltradas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <div>Nenhuma sala multiplayer criada ainda.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Inverter para mostrar mais recentes primeiro
+            const salasOrdenadas = [...salasFiltradas].reverse();
+            
+            container.innerHTML = salasOrdenadas.map((sala, index) => {
+                const data = new Date(sala.timestamp);
+                const dataFormatada = data.toLocaleDateString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const numeroSala = todasSalas.length - index;
+                
+                return `
+                    <div class="sala-item">
+                        <div class="sala-header">
+                            <div>
+                                <div style="font-weight: bold; color: #DAA520; font-size: 16px;">
+                                    🎲 Sala #${numeroSala}
+                                </div>
+                                <div class="sala-info">${dataFormatada}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; font-size: 18px;">👥 ${sala.totalJogadores}</div>
+                                <div class="sala-info">${sala.totalJogadores === 1 ? 'jogador' : 'jogadores'}</div>
+                            </div>
+                        </div>
+                        <div class="sala-jogadores">
+                            ${sala.jogadores.map(nome => `<span class="jogador-tag">👤 ${nome}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function aplicarFiltro() {
+            const filtro = document.getElementById('filtro-geral').value.toLowerCase();
+            const tabAtiva = document.querySelector('.tab.active').textContent.trim();
+            
+            if (!filtro) {
+                recordesFiltrados = [...todosRecordes];
+                salasFiltradas = [...todasSalas];
+            } else {
+                // Filtrar recordes por nome do jogador
+                recordesFiltrados = todosRecordes.filter(r => 
+                    r.nome.toLowerCase().includes(filtro)
+                );
+                
+                // Filtrar salas por nome de qualquer jogador
+                salasFiltradas = todasSalas.filter(sala =>
+                    sala.jogadores.some(nome => nome.toLowerCase().includes(filtro))
+                );
+            }
+            
+            // Atualizar apenas a aba ativa
+            if (tabAtiva.includes('TODOS')) {
+                renderizarTodos();
+            } else if (tabAtiva.includes('SALAS')) {
+                renderizarSalas();
+            }
+        }
+
+        function mudarTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function mostrarLoading(show) {
+            const container = document.getElementById('loading-container');
+            if (show) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div style="margin-top: 15px;">Carregando dados reais do servidor...</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        function atualizarHoraAtualizacao() {
+            const now = new Date();
+            const hora = String(now.getHours()).padStart(2, '0');
+            const minuto = String(now.getMinutes()).padStart(2, '0');
+            const segundo = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('last-update').textContent = `${hora}:${minuto}:${segundo}`;
+        }
+
+        window.onload = function() {
+            carregarDados();
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                carregarDados();
+            }
+        });
+    </script>
+</body>
+</html>
